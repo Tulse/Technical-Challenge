@@ -20,7 +20,7 @@ else
         @foreach (var movie in _movies)
         {
             <li>
-                <strong>@movie.Title</strong>
+                <strong><a href="/movies/@movie.Id">@movie.Title</a></strong>
                 @if (!string.IsNullOrWhiteSpace(movie.ReleaseDate))
                 {
                     <span> (@movie.ReleaseDate)</span>

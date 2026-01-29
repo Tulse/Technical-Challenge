@@ -8,5 +8,9 @@
             int page = 1,
             int pageSize = 20,
             CancellationToken cancellationToken = default);
+
+        Task<MovieDetail> GetMovieDetailAsync(
+            int movieId,
+            CancellationToken cancellationToken = default);
     }
 }

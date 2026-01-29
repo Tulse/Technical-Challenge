@@ -18,5 +18,19 @@
             return response
                 ?? throw new InvalidOperationException("API returned no data.");
         }
+
+        public async Task<MovieDetail> GetMovieDetailAsync(
+            int movieId,
+            CancellationToken cancellationToken = default)
+        {
+            var http = httpClientFactory.CreateClient("MoviesApi");
+
+            var response = await http.GetFromJsonAsync<MovieDetail>(
+                $"movies/{movieId}",
+                cancellationToken);
+
+            return response
+                ?? throw new InvalidOperationException("API returned no data.");
+        }
     }
 }
