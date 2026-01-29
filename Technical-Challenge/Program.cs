@@ -1,4 +1,5 @@
 using Technical_Challenge.Components;
+using Technical_Challenge.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,10 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient("MoviesApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7241/");
+    client.BaseAddress = new Uri("https://localhost:7241/api/");
 });
 
+builder.Services.AddScoped<IMoviesApiClient, MoviesApiClient>();
 
 var app = builder.Build();
 

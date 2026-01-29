@@ -1,3 +1,6 @@
+using MovieAPI.Services;
+using System.Net.Http.Headers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddHttpClient<ITmdbClient, TmdbClient>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var token = config["Tmdb:ReadAccessToken"];
+
+    if (string.IsNullOrWhiteSpace(token))
+    {
+        throw new InvalidOperationException(
+            "TMDB ReadAccessToken is missing. Configure it using User Secrets or environment variables.");
+    }
+
+    client.BaseAddress = new Uri("https://api.themoviedb.org/3/");
+    client.DefaultRequestHeaders.Authorization = 
+        new AuthenticationHeaderValue("Bearer", token);
+});
+
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 var app = builder.Build();
 

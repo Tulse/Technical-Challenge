@@ -1,9 +1,10 @@
 ﻿namespace Technical_Challenge.Components.Pages
 {
-    using System.Net.Http.Json;
     using Microsoft.AspNetCore.Components;
+    using Models;
+    using Services;
 
-    public partial class PopularMovies(IHttpClientFactory httpClientFactory) : ComponentBase
+    public partial class PopularMovies(IMoviesApiClient moviesApi) : ComponentBase
     {
         private bool _isLoading = true;
         private string? _errorMessage;
@@ -13,12 +14,8 @@
         {
             try
             {
-                var http = httpClientFactory.CreateClient("MoviesApi");
-
-                var response = await http.GetFromJsonAsync<PagedResponse<MovieSummary>>(
-                    "api/movies/popular?page=1&pageSize=20");
-
-                _movies = response?.Items?.ToList() ?? [];
+                var response = await moviesApi.GetPopularMoviesAsync();
+                _movies = response.Items.ToList();
             }
             catch (Exception ex)
             {
@@ -29,19 +26,5 @@
                 _isLoading = false;
             }
         }
-
-        public sealed record MovieSummary(
-            int Id,
-            string Title,
-            string? PosterUrl,
-            string? ReleaseDate,
-            double Rating);
-
-        public sealed record PagedResponse<T>(
-            int Page,
-            int PageSize,
-            int TotalPages,
-            int TotalResults,
-            IReadOnlyList<T> Items);
     }
 }

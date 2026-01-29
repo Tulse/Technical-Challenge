@@ -1,0 +1,22 @@
+﻿namespace Technical_Challenge.Services
+{
+    using Models;
+
+    public class MoviesApiClient(IHttpClientFactory httpClientFactory) : IMoviesApiClient
+    {
+        public async Task<PagedResponse<MovieSummary>> GetPopularMoviesAsync(
+            int page = 1,
+            int pageSize = 20,
+            CancellationToken cancellationToken = default)
+        {
+            var http = httpClientFactory.CreateClient("MoviesApi");
+
+            var response = await http.GetFromJsonAsync<PagedResponse<MovieSummary>>(
+                $"movies/popular?page={page}&pageSize={pageSize}",
+                cancellationToken);
+
+            return response
+                ?? throw new InvalidOperationException("API returned no data.");
+        }
+    }
+}
