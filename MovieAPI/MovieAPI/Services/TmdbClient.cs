@@ -1,6 +1,8 @@
 ﻿namespace MovieAPI.Services
 {
+    using MovieAPI.Services.Exceptions;
     using MovieAPI.Services.TmdbDtos;
+    using System.Net;
     using System.Net.Http.Headers;
     using System.Net.Http.Json;
 
@@ -22,11 +24,16 @@
             int movieId,
             CancellationToken cancellationToken)
         {
-            var response = await http.GetFromJsonAsync<TmdbMovieDetail>(
-            $"movie/{movieId}",
-            cancellationToken);
+            using var response = await http.GetAsync($"movie/{movieId}", cancellationToken);
 
-            return response
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                throw new TmdbNotFoundException($"Movie {movieId} not found.");
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<TmdbMovieDetail>(cancellationToken: cancellationToken);
+
+            return result
                 ?? throw new InvalidOperationException("TMDB returned no data.");
         }
     }

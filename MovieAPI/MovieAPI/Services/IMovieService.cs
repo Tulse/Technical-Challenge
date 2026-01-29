@@ -1,15 +1,16 @@
 ﻿namespace MovieAPI.Services
 {
     using Models;
+    using Results;
 
     public interface IMovieService
     {
-        Task<PagedResponse<MovieSummary>> GetPopularMoviesAsync(
+        Task<Result<PagedResponse<MovieSummary>>> GetPopularMoviesAsync(
             int page,
             int pageSize,
             CancellationToken cancellationToken = default);
 
-        Task<MovieDetail> GetMovieDetailAsync(
+        Task<Result<MovieDetail>> GetMovieDetailAsync(
             int movieId,
             CancellationToken cancellationToken = default);
     }

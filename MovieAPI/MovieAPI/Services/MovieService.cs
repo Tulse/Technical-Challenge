@@ -1,48 +1,93 @@
 ﻿namespace MovieAPI.Services
 {
+    using Exceptions;
     using Models;
+    using Results;
     using TmdbDtos;
 
     public sealed class MovieService(ITmdbClient tmdbClient) : IMovieService
     {
         private const string PosterBaseUrl = "https://image.tmdb.org/t/p/w342";
 
-        public async Task<PagedResponse<MovieSummary>> GetPopularMoviesAsync(
+        public async Task<Result<PagedResponse<MovieSummary>>> GetPopularMoviesAsync(
             int page,
             int pageSize,
             CancellationToken cancellationToken = default)
         {
-            var tmdb = await tmdbClient.GetPopularMoviesAsync(page, cancellationToken);
+            if (page < 1)
+                return new ValidationErrorResult<PagedResponse<MovieSummary>>("Page must be at least 1.");
 
-            var items = tmdb.Results
-                .Take(pageSize)
-                .Select(MapMovie)
-                .ToList();
+            if (pageSize is < 1 or > 50)
+                return new ValidationErrorResult<PagedResponse<MovieSummary>>("PageSize must be between 1 and 50.");
 
-            return new PagedResponse<MovieSummary>(
-                tmdb.Page,
-                pageSize,
-                tmdb.TotalPages,
-                tmdb.TotalResults,
-                items);
+            try
+            {
+                var tmdb = await tmdbClient.GetPopularMoviesAsync(page, cancellationToken);
+
+                var items = tmdb.Results
+                    .Take(pageSize)
+                    .Select(MapMovie)
+                    .ToList();
+
+                return new SuccessResult<PagedResponse<MovieSummary>>(
+                    new PagedResponse<MovieSummary>(
+                        tmdb.Page,
+                        pageSize,
+                        tmdb.TotalPages,
+                        tmdb.TotalResults,
+                        items)
+                    );
+            }
+            catch (HttpRequestException ex)
+            {
+                return new ExternalServiceErrorResult<PagedResponse<MovieSummary>>(
+                    $"TMDB request failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return new ExternalServiceErrorResult<PagedResponse<MovieSummary>>(
+                    $"Unexpected error while retrieving popular movies: {ex.Message}");
+            }
         }
 
-        public async Task<MovieDetail> GetMovieDetailAsync(
+        public async Task<Result<MovieDetail>> GetMovieDetailAsync(
             int movieId, 
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
-            var tmdb = await tmdbClient.GetMovieDetailAsync(movieId, cancellationToken);
+            if (movieId < 1)
+                return new ValidationErrorResult<MovieDetail>("MovieId must be greater than zero.");
 
-            return new MovieDetail(
-            tmdb.Id,
-            tmdb.Title,
-            tmdb.Overview,
-            tmdb.PosterPath is null ? null : $"{PosterBaseUrl}{tmdb.PosterPath}",
-            tmdb.ReleaseDate,
-            tmdb.Runtime,
-            tmdb.VoteAverage,
-            tmdb.Genres.Select(g => g.Name).ToList()
-            );
+            try
+            {
+                var tmdb = await tmdbClient.GetMovieDetailAsync(movieId, cancellationToken);
+
+                return new SuccessResult<MovieDetail>(
+                    new MovieDetail(
+                        tmdb.Id,
+                        tmdb.Title,
+                        tmdb.Overview,
+                        tmdb.PosterPath is null ? null : $"{PosterBaseUrl}{tmdb.PosterPath}",
+                        tmdb.ReleaseDate,
+                        tmdb.Runtime,
+                        tmdb.VoteAverage,
+                        tmdb.Genres.Select(g => g.Name).ToList()
+                    )
+                );
+            }
+            catch (TmdbNotFoundException ex)
+            {
+                return new NotFoundResult<MovieDetail>(ex.Message);
+            }
+            catch (HttpRequestException ex)
+            {
+                return new ExternalServiceErrorResult<MovieDetail>(
+                    $"TMDB request failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return new ExternalServiceErrorResult<MovieDetail>(
+                    $"Unexpected error while retrieving movie details: {ex.Message}");
+            }
         }
 
         private static MovieSummary MapMovie(TmdbMovie movie) =>
