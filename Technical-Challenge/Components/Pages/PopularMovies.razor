@@ -1,0 +1,36 @@
+﻿@page "/movies/popular"
+
+<h3>Popular Movies</h3>
+
+@if (_isLoading)
+{
+    <p>Loading…</p>
+}
+else if (_errorMessage is not null)
+{
+    <p style="color: darkred;">@_errorMessage</p>
+}
+else if (_movies.Count == 0)
+{
+    <p>No movies returned.</p>
+}
+else
+{
+    <ul>
+        @foreach (var movie in _movies)
+        {
+            <li>
+                <strong>@movie.Title</strong>
+                @if (!string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                {
+                    <span> (@movie.ReleaseDate)</span>
+                }
+                <span> — Rating: @movie.Rating</span>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+
+}
