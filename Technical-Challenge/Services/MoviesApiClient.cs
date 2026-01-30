@@ -32,5 +32,23 @@
             return response
                 ?? throw new InvalidOperationException("API returned no data.");
         }
+
+        public async Task<PagedResponse<MovieSummary>> SearchMoviesAsync(
+            string query,
+            int page = 1,
+            int pageSize = 20,
+            CancellationToken cancellationToken = default)
+        {
+            var http = httpClientFactory.CreateClient("MoviesApi");
+
+            var encodedQuery = Uri.EscapeDataString(query);
+
+            var response = await http.GetFromJsonAsync<PagedResponse<MovieSummary>>(
+                $"movies/search?query={encodedQuery}&page={page}&pageSize={pageSize}",
+                cancellationToken);
+
+            return response
+                ?? throw new InvalidOperationException("API returned no data.");
+        }
     }
 }

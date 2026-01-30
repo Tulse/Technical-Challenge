@@ -13,5 +13,11 @@
         Task<Result<MovieDetail>> GetMovieDetailAsync(
             int movieId,
             CancellationToken cancellationToken = default);
+
+        Task<Result<PagedResponse<MovieSummary>>> SearchMoviesAsync(
+            string query,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default);
     }
 }

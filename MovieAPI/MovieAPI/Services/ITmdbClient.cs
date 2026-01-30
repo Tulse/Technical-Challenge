@@ -9,7 +9,12 @@
             CancellationToken cancellationToken = default);
 
         Task<TmdbMovieDetail> GetMovieDetailAsync(
-        int movieId,
-        CancellationToken cancellationToken = default);
+            int movieId,
+            CancellationToken cancellationToken = default);
+
+        Task<TmdbPopularResponse> SearchMoviesAsync(
+            string query,
+            int page,
+            CancellationToken cancellationToken = default);
     }
 }

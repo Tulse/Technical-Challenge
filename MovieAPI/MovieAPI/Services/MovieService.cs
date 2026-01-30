@@ -90,6 +90,50 @@
             }
         }
 
+        public async Task<Result<PagedResponse<MovieSummary>>> SearchMoviesAsync(
+            string query,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return new ValidationErrorResult<PagedResponse<MovieSummary>>("Query must be provided.");
+
+            if (page < 1)
+                return new ValidationErrorResult<PagedResponse<MovieSummary>>("Page must be at least 1.");
+
+            if (pageSize is < 1 or > 50)
+                return new ValidationErrorResult<PagedResponse<MovieSummary>>("PageSize must be between 1 and 50.");
+
+            try
+            {
+                var tmdb = await tmdbClient.SearchMoviesAsync(query, page, cancellationToken);
+
+                var items = tmdb.Results
+                    .Take(pageSize)
+                    .Select(MapMovie)
+                    .ToList();
+
+                return new SuccessResult<PagedResponse<MovieSummary>>(
+                    new PagedResponse<MovieSummary>(
+                        tmdb.Page,
+                        pageSize,
+                        tmdb.TotalPages,
+                        tmdb.TotalResults,
+                        items));
+            }
+            catch (HttpRequestException ex)
+            {
+                return new ExternalServiceErrorResult<PagedResponse<MovieSummary>>(
+                    $"TMDB request failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return new ExternalServiceErrorResult<PagedResponse<MovieSummary>>(
+                    $"Unexpected error while searching movies: {ex.Message}");
+            }
+        }
+
         private static MovieSummary MapMovie(TmdbMovie movie) =>
             new(
                 movie.Id,

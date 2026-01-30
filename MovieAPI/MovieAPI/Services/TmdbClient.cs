@@ -36,5 +36,19 @@
             return result
                 ?? throw new InvalidOperationException("TMDB returned no data.");
         }
+
+        public async Task<TmdbPopularResponse> SearchMoviesAsync(
+            string query,
+            int page,
+            CancellationToken cancellationToken = default)
+        {
+            var encodedQuery = Uri.EscapeDataString(query);
+
+            var response = await http.GetFromJsonAsync<TmdbPopularResponse>(
+                $"search/movie?query={encodedQuery}&page={page}",
+                cancellationToken);
+
+            return response ?? throw new InvalidOperationException("TMDB returned no data.");
+        }
     }
 }

@@ -45,5 +45,23 @@
                 _ => StatusCode(500)
             };
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(
+            [FromQuery] string query,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await movieService.SearchMoviesAsync(query, page, pageSize, cancellationToken);
+
+            return result switch
+            {
+                SuccessResult<PagedResponse<MovieSummary>> ok => Ok(ok.Value),
+                ValidationErrorResult<PagedResponse<MovieSummary>> ve => BadRequest(ve.Message),
+                ExternalServiceErrorResult<PagedResponse<MovieSummary>> ese => StatusCode(502, ese.Message),
+                _ => StatusCode(500)
+            };
+        }
     }
 }
