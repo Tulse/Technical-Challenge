@@ -38,20 +38,11 @@
 
             return movie switch
             {
-                SuccessResult<MovieDetail> ok =>
-                    Ok(ok.Value),
-
-                NotFoundResult<MovieDetail> nf =>
-                    NotFound(nf.Message),
-
-                ValidationErrorResult<MovieDetail> ve =>
-                    BadRequest(ve.Message),
-
-                ExternalServiceErrorResult<MovieDetail> ese =>
-                    StatusCode(502, ese.Message),
-
-                _ =>
-                    StatusCode(500)
+                SuccessResult<MovieDetail> ok => Ok(ok.Value),
+                NotFoundResult<MovieDetail> nf => NotFound(nf.Message),
+                ValidationErrorResult<MovieDetail> ve => BadRequest(ve.Message),
+                ExternalServiceErrorResult<MovieDetail> ese => StatusCode(502, ese.Message),
+                _ => StatusCode(500)
             };
         }
     }
