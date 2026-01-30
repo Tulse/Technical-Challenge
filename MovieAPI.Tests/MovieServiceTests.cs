@@ -10,8 +10,6 @@ namespace MovieAPI.Tests
 {
     public class MovieServiceTests
     {
-        // Success
-
         [Fact]
         public async Task GetMovieDetailAsync_WhenTmdbReturnsMovie_ReturnsSuccessResultWithMappedMovieDetail()
         {
@@ -51,8 +49,6 @@ namespace MovieAPI.Tests
             Assert.NotNull(ok.Value.PosterUrl);
             Assert.Contains("/poster.jpg", ok.Value.PosterUrl);
         }
-
-        // Failures
 
         [Fact]
         public async Task GetMovieDetailAsync_WhenMovieIdIsInvalid_ReturnsValidationError()
@@ -139,6 +135,67 @@ namespace MovieAPI.Tests
 
             // Act
             var result = await sut.GetPopularMoviesAsync(page: 1, pageSize: 2, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+
+            var ok = Assert.IsType<SuccessResult<PagedResponse<MovieSummary>>>(result);
+            Assert.Equal(2, ok.Value.Items.Count);
+            Assert.Equal("Movie 1", ok.Value.Items[0].Title);
+            Assert.Equal("Movie 2", ok.Value.Items[1].Title);
+        }
+
+        [Fact]
+        public async Task SearchMoviesAsync_WhenQueryIsEmpty_ReturnsValidationError()
+        {
+            // Arrange
+            var tmdbClient = Substitute.For<ITmdbClient>();
+            var sut = new MovieService(tmdbClient);
+
+            // Act
+            var result = await sut.SearchMoviesAsync(
+                query: "",
+                page: 1,
+                pageSize: 20,
+                CancellationToken.None);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            var error = Assert.IsType<ValidationErrorResult<PagedResponse<MovieSummary>>>(result);
+            Assert.Contains("Query", error.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task SearchMoviesAsync_WhenTmdbReturnsResults_ReturnsSuccessResultWithTrimmedItems()
+        {
+            // Arrange
+            var tmdbClient = Substitute.For<ITmdbClient>();
+
+            tmdbClient
+                .SearchMoviesAsync("test", 1, Arg.Any<CancellationToken>())
+                .Returns(new TmdbPopularResponse
+                {
+                    Page = 1,
+                    TotalPages = 1,
+                    TotalResults = 3,
+                    Results =
+                    {
+                        new TmdbMovie { Id = 1, Title = "Movie 1" },
+                        new TmdbMovie { Id = 2, Title = "Movie 2" },
+                        new TmdbMovie { Id = 3, Title = "Movie 3" },
+                        new TmdbMovie { Id = 2, Title = "Movie 4" },
+                        new TmdbMovie { Id = 2, Title = "Movie 5" }
+                    }
+                });
+
+            var sut = new MovieService(tmdbClient);
+
+            // Act
+            var result = await sut.SearchMoviesAsync(
+                query: "test",
+                page: 1,
+                pageSize: 2,
+                CancellationToken.None);
 
             // Assert
             Assert.True(result.IsSuccess);
