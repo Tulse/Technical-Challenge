@@ -1,9 +1,12 @@
 ﻿namespace Technical_Challenge.Models
 {
-    public sealed record PagedResponse<T>(
-    int Page,
-    int PageSize,
-    int TotalPages,
-    int TotalResults,
-    IReadOnlyList<T> Items);
+    public sealed class PagedResponse<T>
+    {
+        public int Page { get; init; }
+        public int PageSize { get; init; }
+        public int TotalPages { get; init; }
+        public int TotalResults { get; init; }
+
+        public List<T> Items { get; init; } = [];
+    }
 }
