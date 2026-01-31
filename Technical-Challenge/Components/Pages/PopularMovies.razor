@@ -1,32 +1,53 @@
 ﻿@page "/movies/popular"
 
-<h3>Popular Movies</h3>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mx-0">
 
-@if (_isLoading)
-{
-    <p>Loading…</p>
-}
-else if (_errorMessage is not null)
-{
-    <p style="color: darkred;">@_errorMessage</p>
-}
-else if (_movies.Count == 0)
-{
-    <p>No movies returned.</p>
-}
-else
-{
-    <ul>
-        @foreach (var movie in _movies)
-        {
-            <li>
-                <strong><a href="/movies/@movie.Id">@movie.Title</a></strong>
-                @if (!string.IsNullOrWhiteSpace(movie.ReleaseDate))
-                {
-                    <span> (@movie.ReleaseDate)</span>
-                }
-                <span> — Rating: @movie.Rating</span>
-            </li>
-        }
-    </ul>
-}
+    <MudText Typo="Typo.h4" GutterBottom="true">
+        Popular Movies
+    </MudText>
+
+    @if (_isLoading)
+    {
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Primary" />
+    }
+    else if (!string.IsNullOrWhiteSpace(_errorMessage))
+    {
+        <MudAlert Severity="Severity.Error">
+            @_errorMessage
+        </MudAlert>
+    }
+    else if (_movies.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">
+            No movies returned.
+        </MudAlert>
+    }
+    else
+    {
+        <MudList T="object" Dense="true">
+            @foreach (var movie in _movies)
+            {
+                <MudListItem T="object"
+                             Clickable="true"
+                             Href="@($"/movies/{movie.Id}")">
+                    <MudText Typo="Typo.subtitle1">
+                        @movie.Title
+                    </MudText>
+
+                    <MudText Typo="Typo.body2">
+                        @if (!string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                        {
+                            <span>@movie.ReleaseDate · </span>
+                        }
+                        Rating: @movie.Rating
+                    </MudText>
+                </MudListItem>
+
+                <MudDivider />
+            }
+        </MudList>
+
+    }
+
+</MudContainer>
