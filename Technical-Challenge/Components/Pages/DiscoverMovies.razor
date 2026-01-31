@@ -1,4 +1,5 @@
 ﻿@page "/movies/discover"
+@inject NavigationManager Navigation
 
 <h3>Top-Rated Movies (Virtualized)</h3>
 
@@ -13,28 +14,37 @@ else if (!string.IsNullOrEmpty(_errorMessage))
 else if (_movies?.Count > 0)
 {
     <Virtualize Items="_movies" Context="movie" ItemSize="340">
-        <MudPaper Class="ma-3 pa-3" Elevation="2">
-            <div style="display:flex; gap:16px;">
-                <MudImage Src="@movie.PosterUrl"
-                    Alt="@movie.Title"
-                    Width="160"
-                    Height="240"
-                    ObjectFit="ObjectFit.Cover" />
-                <div>
-                    <MudText Typo="Typo.h6">@movie.Title</MudText>
-                    <MudText Typo="Typo.subtitle2">
-                        Rating: @movie.Rating · @movie.ReleaseDate
-                    </MudText>
+        <div class="discover-card"
+             role="button"
+             tabindex="0"
+             @onclick="@(() => Navigation.NavigateTo($"/movies/{movie.Id}"))"
+             @onkeydown="@(e => { if (e.Key == "Enter") Navigation.NavigateTo($"/movies/{movie.Id}"); })">
 
-                    <MudText Typo="Typo.body2" Class="mt-2">
-                        @(movie.Overview?.Length > 200
-                            ? movie.Overview[..200] + "…"
-                            : movie.Overview)
+            <MudPaper Class="ma-3 pa-3" Elevation="2">
+                <div style="display:flex; gap:16px;">
+                    <MudImage Src="@movie.PosterUrl"
+                              Alt="@movie.Title"
+                              Width="160"
+                              Height="240"
+                              ObjectFit="ObjectFit.Cover" />
+                    <div>
+                        <MudText Typo="Typo.h6">@movie.Title</MudText>
+                        <MudText Typo="Typo.subtitle2">
+                            Rating: @movie.Rating · @movie.ReleaseDate
+                        </MudText>
+
+                        <MudText Typo="Typo.body2" Class="mt-2">
+                            @(movie.Overview?.Length > 200
+                                                    ? movie.Overview[..200] + "…"
+                                                    : movie.Overview)
                     </MudText>
                 </div>
             </div>
         </MudPaper>
+
+        </div>
     </Virtualize>
+
 }
 else
 {
