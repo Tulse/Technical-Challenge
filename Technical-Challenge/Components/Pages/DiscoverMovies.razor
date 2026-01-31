@@ -1,7 +1,4 @@
 ﻿@page "/movies/discover"
-@using Technical_Challenge.Models
-@using Technical_Challenge.Services
-@inject IMoviesApiClient MoviesApi
 
 <h3>Top-Rated Movies (Virtualized)</h3>
 
@@ -42,27 +39,4 @@ else if (_movies?.Count > 0)
 else
 {
     <p>No movies to display.</p>
-}
-
-@code {
-    private List<Models.MovieDiscover> _movies = new();
-    private bool _isLoading;
-    private string? _errorMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _isLoading = true;
-        try
-        {
-            _movies = await MoviesApi.DiscoverMoviesAsync();
-        }
-        catch (Exception ex)
-        {
-            _errorMessage = $"Failed to load movies: {ex.Message}";
-        }
-        finally
-        {
-            _isLoading = false;
-        }
-    }
 }

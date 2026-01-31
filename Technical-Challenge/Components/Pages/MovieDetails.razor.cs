@@ -1,6 +1,7 @@
 ﻿namespace Technical_Challenge.Components.Pages
 {
     using Microsoft.AspNetCore.Components;
+    using Microsoft.JSInterop;
     using Services;
 
     public partial class MovieDetails(IMoviesApiClient moviesApi) : ComponentBase
@@ -25,6 +26,11 @@
             {
                 _isLoading = false;
             }
+        }
+
+        private async Task GoBack()
+        {
+            await JS.InvokeVoidAsync("history.back");
         }
     }
 }

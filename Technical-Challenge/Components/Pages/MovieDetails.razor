@@ -1,8 +1,17 @@
 ﻿@page "/movies/{MovieId:int}"
+@inject IJSRuntime JS
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mx-0">
 
     <h3>Movie Details</h3>
+
+    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
+               Variant="Variant.Text"
+               Color="Color.Primary"
+               Class="mb-3"
+               OnClick="GoBack">
+        Back
+    </MudButton>
 
     @if (_isLoading)
     {
