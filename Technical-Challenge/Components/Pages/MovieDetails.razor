@@ -1,29 +1,56 @@
 ﻿@page "/movies/{MovieId:int}"
 
-<h3>Movie Details</h3>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mx-0">
 
-@if (_isLoading)
-{
-    <p>Loading…</p>
-}
-else if (_errorMessage is not null)
-{
-    <p style="color: darkred;">@_errorMessage</p>
-}
-else if (_movie is not null)
-{
-    <h4>@_movie.Title</h4>
+    <h3>Movie Details</h3>
 
-    @if (_movie.PosterUrl is not null)
+    @if (_isLoading)
     {
-        <img src="@_movie.PosterUrl" style="max-width:200px;" />
+        < MudProgressCircular Indeterminate = "true" Color = "Color.Primary" />
     }
+    else if (!string.IsNullOrWhiteSpace(_errorMessage))
+    {
+        <MudAlert Severity="Severity.Error">
+            @_errorMessage
+        </MudAlert>
+    }
+    else if (_movie is not null)
+    {
+        <MudGrid GutterSize="3">
+            <MudItem xs="12" sm="4" md="3">
+                @if (_movie.PosterUrl is not null)
+                {
+                    <MudPaper Elevation="2" Class="pa-2">
+                        <MudImage Src="@_movie.PosterUrl"
+                                  Alt="@_movie.Title"
+                                  Style="width:100%; height:auto;"
+                                  ObjectFit="ObjectFit.Contain" />
+                    </MudPaper>
+                }
+            </MudItem>
 
-    <p><strong>Release:</strong> @_movie.ReleaseDate</p>
-    <p><strong>Runtime:</strong> @_movie.RuntimeMinutes min</p>
-    <p><strong>Rating:</strong> @_movie.Rating</p>
+            <MudItem xs="12" sm="8" md="9">
 
-    <p>@_movie.Overview</p>
+                <MudText Typo="Typo.h4">@_movie.Title</MudText>
 
-    <p><strong>Genres:</strong> @string.Join(", ", _movie.Genres)</p>
-}
+                <MudText Typo="Typo.subtitle1" Class="mt-1">
+                    Rating: @_movie.Rating
+                </MudText>
+
+                @if (!string.IsNullOrWhiteSpace(_movie.ReleaseDate))
+                {
+                    <MudText Typo="Typo.subtitle2" Class="mb-3">
+                        Released: @_movie.ReleaseDate
+                    </MudText>
+                }
+
+                <MudDivider Class="my-3" />
+
+                <MudText Typo="Typo.body1">
+                    @_movie.Overview
+                </MudText>
+
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
