@@ -10,60 +10,74 @@
     </MudText>
 
     <!-- Search Bar -->
-    <MudPaper Class="pa-4 mb-4" Elevation="0">
-        <MudStack Direction="Row" Spacing="2" AlignItems="AlignItems.End">
-            <MudTextField @bind-Value="_query"
-                          Label="Search"
-                          Placeholder="Type to search…"
-                          Immediate="true"
-                          Variant="Variant.Outlined"
-                          FullWidth="true" />
+    <MudPaper Class="pa-3 mb-2" Elevation="0">
+        <MudGrid GutterSize="2" AlignItems="AlignItems.Center">
 
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       OnClick="SearchAsync">
-                Search
-            </MudButton>
-        </MudStack>
+            <MudItem xs="12" sm="9" md="10">
+                <MudTextField @bind-Value="_query"
+                              Label="Search"
+                              Placeholder="Type to search…"
+                              Immediate="true"
+                              Variant="Variant.Outlined"
+                              Dense="true" />
+            </MudItem>
+
+            <MudItem xs="12" sm="3" md="2" Class="d-flex align-center">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           OnClick="SearchAsync">
+                    Search
+                </MudButton>
+            </MudItem>
+
+        </MudGrid>
     </MudPaper>
 
     <!-- Filters -->
-    <MudPaper Class="pa-4 mb-4" Elevation="0">
-        <MudStack Spacing="3">
+    <MudPaper Class="pa-3 mb-3" Elevation="0">
+        <MudGrid GutterSize="2" AlignItems="AlignItems.Center">
 
-            <MudStack Direction="Row" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                <MudText Typo="Typo.subtitle1">
-                    Filters
-                </MudText>
+            <!-- Min Rating -->
+            <MudItem xs="12" md="6">
+                <MudSlider @bind-Value="_minRating"
+                           Min="0"
+                           Max="10"
+                           Step="0.5"
+                           Immediate="true"
+                           Color="Color.Primary">
+                    <LabelTemplate>
+                        Min rating: @_minRating
+                    </LabelTemplate>
+                </MudSlider>
+            </MudItem>
 
+            <!-- Release Year -->
+            <MudItem xs="6" md="3">
+                <MudNumericField T="int?"
+                                 @bind-Value="_releaseYear"
+                                 Label="Year"
+                                 Variant="Variant.Outlined"
+                                 Dense="true"
+                                 Min="1900"
+                                 Max="2100"
+                                 Clearable="true" />
+            </MudItem>
+
+            <!-- Reset -->
+            <MudItem xs="6" md="3" Class="d-flex align-center">
                 <MudButton Variant="Variant.Text"
                            Color="Color.Secondary"
                            Disabled="!HasActiveFilters"
+                           FullWidth="true"
                            OnClick="ResetFilters">
-                    Reset filters
+                    Reset Filters
                 </MudButton>
-            </MudStack>
+            </MudItem>
 
-            <MudSlider @bind-Value="_minRating"
-                       Min="0"
-                       Max="10"
-                       Step="0.5"
-                       Color="Color.Primary"
-                       Immediate="true">
-                <LabelTemplate>
-                    Minimum Rating: @_minRating
-                </LabelTemplate>
-            </MudSlider>
-
-            <MudNumericField T="int?"
-                             @bind-Value="_releaseYear"
-                             Label="Release year"
-                             Placeholder="e.g. 2005"
-                             Min="1900"
-                             Max="2100"
-                             Clearable="true" />
-        </MudStack>
+        </MudGrid>
     </MudPaper>
+
 
     <!-- Results -->
     @if (_isLoading)
