@@ -3,6 +3,7 @@
     using MovieAPI.Services.Exceptions;
     using MovieAPI.Services.TmdbDtos;
     using System.Net;
+    using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Net.Http.Json;
 
@@ -49,6 +50,16 @@
                 cancellationToken);
 
             return response ?? throw new InvalidOperationException("TMDB returned no data.");
+        }
+
+        public async Task<TmdbPaginatedResponse<TmdbBigListMovie>> DiscoverMoviesAsync(
+            int page, CancellationToken cancellationToken = default)
+        {
+            var response = await http.GetFromJsonAsync<TmdbPaginatedResponse<TmdbBigListMovie>>(
+                $"discover/movie?sort_by=vote_average.desc&page={page}",
+                cancellationToken);
+
+            return response ?? new TmdbPaginatedResponse<TmdbBigListMovie>();
         }
     }
 }

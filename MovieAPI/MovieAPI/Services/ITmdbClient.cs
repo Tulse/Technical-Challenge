@@ -1,6 +1,6 @@
 ﻿namespace MovieAPI.Services
 {
-    using Services.TmdbDtos;
+    using TmdbDtos;
 
     public interface ITmdbClient
     {
@@ -16,5 +16,11 @@
             string query,
             int page,
             CancellationToken cancellationToken = default);
+
+        Task<TmdbPaginatedResponse<TmdbBigListMovie>> DiscoverMoviesAsync(
+            int page,
+            CancellationToken cancellationToken = default
+        );
+
     }
 }

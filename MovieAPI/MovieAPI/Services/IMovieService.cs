@@ -19,5 +19,9 @@
             int page,
             int pageSize,
             CancellationToken cancellationToken = default);
+
+        Task<Result<List<MovieSummary>>> GetVirtualizeMoviesAsync(
+            int pagesToFetch = 10,
+            CancellationToken cancellationToken = default);
     }
 }

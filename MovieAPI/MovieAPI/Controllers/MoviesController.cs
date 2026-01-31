@@ -63,5 +63,19 @@
                 _ => StatusCode(500)
             };
         }
+
+        [HttpGet("virtualize")]
+        public async Task<IActionResult> GetVirtualizeMovies(CancellationToken cancellationToken = default)
+        {
+            var result = await movieService.GetVirtualizeMoviesAsync(10, cancellationToken);
+
+            return result switch
+            {
+                SuccessResult<List<MovieSummary>> ok => Ok(ok.Value),
+                ValidationErrorResult<List<MovieSummary>> ve => BadRequest(ve.Message),
+                ExternalServiceErrorResult<List<MovieSummary>> ese => StatusCode(502, ese.Message),
+                _ => StatusCode(500)
+            };
+        }
     }
 }
