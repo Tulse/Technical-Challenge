@@ -19,7 +19,7 @@
             int pageSize = 20,
             CancellationToken cancellationToken = default);
 
-        Task<List<MovieDetail>> DiscoverMoviesAsync(
+        Task<List<MovieDiscover>> DiscoverMoviesAsync(
             CancellationToken cancellationToken = default);
     }
 }

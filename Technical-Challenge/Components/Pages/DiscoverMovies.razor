@@ -15,23 +15,29 @@ else if (!string.IsNullOrEmpty(_errorMessage))
 }
 else if (_movies?.Count > 0)
 {
-    <div class="virtualize-container">
-        <Virtualize Items="_movies" Context="movie">
-            <div class="movie-card">
-                <MudPaper Elevation="2" Class="pa-2 mx-2 my-2">
-                    <MudCard Style="width: 200px;">
-                        <MudCardMedia Image="@movie.PosterUrl" Alt="@movie.Title" Height="280" />
-                        <MudCardContent Class="p-2">
-                            <MudText Typo="Typo.h6">@movie.Title</MudText>
-                            <MudText Typo="Typo.subtitle2">@movie.ReleaseDate</MudText>
-                            <MudText Typo="Typo.body2">@((movie.Overview?.Length > 140) ? $"{movie.Overview[..140]}…" : movie.Overview)</MudText>
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Rating: @movie.Rating</MudText>
-                        </MudCardContent>
-                    </MudCard>
-                </MudPaper>
+    <Virtualize Items="_movies" Context="movie" ItemSize="340">
+        <MudPaper Class="ma-3 pa-3" Elevation="2">
+            <div style="display:flex; gap:16px;">
+                <MudImage Src="@movie.PosterUrl"
+                    Alt="@movie.Title"
+                    Width="160"
+                    Height="240"
+                    ObjectFit="ObjectFit.Cover" />
+                <div>
+                    <MudText Typo="Typo.h6">@movie.Title</MudText>
+                    <MudText Typo="Typo.subtitle2">
+                        Rating: @movie.Rating · @movie.ReleaseDate
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="mt-2">
+                        @(movie.Overview?.Length > 200
+                            ? movie.Overview[..200] + "…"
+                            : movie.Overview)
+                    </MudText>
+                </div>
             </div>
-        </Virtualize>
-    </div>
+        </MudPaper>
+    </Virtualize>
 }
 else
 {
@@ -39,7 +45,7 @@ else
 }
 
 @code {
-    private List<Models.MovieDetail> _movies = new();
+    private List<Models.MovieDiscover> _movies = new();
     private bool _isLoading;
     private string? _errorMessage;
 

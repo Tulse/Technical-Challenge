@@ -134,11 +134,11 @@
             }
         }
 
-        public async Task<Result<List<MovieSummary>>> GetVirtualizeMoviesAsync(
+        public async Task<Result<List<MovieDiscover>>> GetVirtualizeMoviesAsync(
             int pagesToFetch = 10,
             CancellationToken cancellationToken = default)
         {
-            var allMovies = new List<MovieSummary>();
+            var allMovies = new List<MovieDiscover>();
 
             for (var page = 1; page <= pagesToFetch; page++)
             {
@@ -146,9 +146,10 @@
 
                 var validMovies = tmdb.Results
                     .Where(m => !string.IsNullOrEmpty(m.PosterPath))
-                    .Select(m => new MovieSummary(
+                    .Select(m => new MovieDiscover(
                         m.Id,
                         m.Title,
+                        m.Overview,
                         $"{PosterBaseUrl}{m.PosterPath}",
                         m.ReleaseDate,
                         m.VoteAverage
@@ -157,7 +158,7 @@
                 allMovies.AddRange(validMovies);
             }
 
-            return new SuccessResult<List<MovieSummary>>(allMovies);
+            return new SuccessResult<List<MovieDiscover>>(allMovies);
         }
 
         private static MovieSummary MapMovie(TmdbMovie movie) =>

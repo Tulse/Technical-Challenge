@@ -71,9 +71,9 @@
 
             return result switch
             {
-                SuccessResult<List<MovieSummary>> ok => Ok(ok.Value),
-                ValidationErrorResult<List<MovieSummary>> ve => BadRequest(ve.Message),
-                ExternalServiceErrorResult<List<MovieSummary>> ese => StatusCode(502, ese.Message),
+                SuccessResult<List<MovieDiscover>> ok => Ok(ok.Value),
+                ValidationErrorResult<List<MovieDiscover>> ve => BadRequest(ve.Message),
+                ExternalServiceErrorResult<List<MovieDiscover>> ese => StatusCode(502, ese.Message),
                 _ => StatusCode(500)
             };
         }
