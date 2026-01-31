@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Technical_Challenge.Models;
 using Technical_Challenge.Services;
 
@@ -11,6 +12,8 @@ public partial class SearchMovies : ComponentBase
     private bool _isLoading;
     private bool _hasSearched;
     private string? _errorMessage;
+    private string _sortLabel = string.Empty;
+    private SortDirection _sortDirection = SortDirection.None;
 
     private List<MovieSummary> _movies = [];
 

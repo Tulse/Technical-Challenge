@@ -1,12 +1,13 @@
 ﻿@namespace Technical_Challenge.Components.Pages
 @page "/movies/search"
 @rendermode InteractiveServer
+@using Models
 
 <h3>Search Movies</h3>
 
 <div style="margin-bottom: 1rem;">
     <input @bind="_query" @bind:event="oninput" placeholder="Type to search…" style="width: 320px;" />
-    <button @onclick="SearchAsync" style="margin-left: .5rem;">Search</button>
+    <button @onclick="SearchAsync" style="margin-left: .5rem;">Search</button> @* // make this a mud button *@
 </div>
 
 @if (_isLoading)
@@ -23,21 +24,45 @@ else if (_hasSearched && _movies.Count == 0)
 }
 else if (_movies.Count > 0)
 {
-    <ul>
-        @foreach (var movie in _movies)
-        {
-            <li>
-                <a href="/movies/@movie.Id">@movie.Title</a>
-                @if (!string.IsNullOrWhiteSpace(movie.ReleaseDate))
-                {
-                    <span> (@movie.ReleaseDate)</span>
-                }
-                <span> — Rating: @movie.Rating</span>
-            </li>
-        }
-    </ul>
-}
+    @if (_movies.Count == 0 && _hasSearched)
+    {
+        <p>No results.</p>
+    }
+    else if (_movies.Count > 0)
+    {
+        <MudTable Items="_movies" Hover="true" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel T="MovieSummary"
+                                       SortBy="@(m => m.Title)">
+                        Title
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel T="MovieSummary"
+                                       SortBy="@(m => m.ReleaseDate)">
+                        Release Date
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel T="MovieSummary"
+                                       SortBy="@(m => m.Rating)">
+                        Rating
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
 
-@code {
-    // This connects to SearchMovies.razor.cs
+            <RowTemplate>
+                <MudTd DataLabel="Title">@context.Title</MudTd>
+                <MudTd DataLabel="Release Date">@context.ReleaseDate</MudTd>
+                <MudTd DataLabel="Rating">@context.Rating</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudButton Variant="Variant.Text" Href="@($"/movies/{context.Id}")">
+                        View Detail
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
 }

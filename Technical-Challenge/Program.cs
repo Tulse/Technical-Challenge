@@ -1,3 +1,4 @@
+using MudBlazor.Services;
 using Technical_Challenge.Components;
 using Technical_Challenge.Services;
 
@@ -14,6 +15,11 @@ builder.Services.AddHttpClient("MoviesApi", client =>
 
 builder.Services.AddScoped<IMoviesApiClient, MoviesApiClient>();
 
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services.AddMudServices();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,6 +35,7 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
