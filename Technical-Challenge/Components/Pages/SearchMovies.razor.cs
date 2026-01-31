@@ -12,8 +12,8 @@ public partial class SearchMovies : ComponentBase
     private bool _isLoading;
     private bool _hasSearched;
     private string? _errorMessage;
-    private string _sortLabel = string.Empty;
-    private SortDirection _sortDirection = SortDirection.None;
+    private double _minRating = 0;
+    private int? _releaseYear;
 
     private List<MovieSummary> _movies = [];
 
@@ -49,4 +49,22 @@ public partial class SearchMovies : ComponentBase
             _isLoading = false;
         }
     }
+
+    private void ResetFilters()
+    {
+        _minRating = 0;
+        _releaseYear = null;
+    }
+
+    private bool HasActiveFilters =>
+    _minRating > 0 || _releaseYear.HasValue;
+
+    private IEnumerable<MovieSummary> FilteredMovies =>
+    _movies
+        .Where(m => m.Rating >= _minRating)
+        .Where(m =>
+            !_releaseYear.HasValue ||
+            (m.ReleaseDate?.Length >= 4 &&
+             int.TryParse(m.ReleaseDate[..4], out var year) &&
+             year == _releaseYear));
 }

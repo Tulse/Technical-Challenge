@@ -1,36 +1,94 @@
 ﻿@namespace Technical_Challenge.Components.Pages
 @page "/movies/search"
-@rendermode InteractiveServer
+@inject NavigationManager Navigation
 @using Models
 
-<h3>Search Movies</h3>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mx-0">
 
-<div style="margin-bottom: 1rem;">
-    <input @bind="_query" @bind:event="oninput" placeholder="Type to search…" style="width: 320px;" />
-    <button @onclick="SearchAsync" style="margin-left: .5rem;">Search</button> @* // make this a mud button *@
-</div>
+    <MudText Typo="Typo.h4" GutterBottom="true">
+        Search Movies
+    </MudText>
 
-@if (_isLoading)
-{
-    <p>Loading…</p>
-}
-else if (_errorMessage is not null)
-{
-    <p style="color: darkred;">@_errorMessage</p>
-}
-else if (_hasSearched && _movies.Count == 0)
-{
-    <p>No results.</p>
-}
-else if (_movies.Count > 0)
-{
-    @if (_movies.Count == 0 && _hasSearched)
+    <!-- Search Bar -->
+    <MudPaper Class="pa-4 mb-4" Elevation="0">
+        <MudStack Direction="Row" Spacing="2" AlignItems="AlignItems.End">
+            <MudTextField @bind-Value="_query"
+                          Label="Search"
+                          Placeholder="Type to search…"
+                          Immediate="true"
+                          Variant="Variant.Outlined"
+                          FullWidth="true" />
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="SearchAsync">
+                Search
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+
+    <!-- Filters -->
+    <MudPaper Class="pa-4 mb-4" Elevation="0">
+        <MudStack Spacing="3">
+
+            <MudStack Direction="Row" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <MudText Typo="Typo.subtitle1">
+                    Filters
+                </MudText>
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Secondary"
+                           Disabled="!HasActiveFilters"
+                           OnClick="ResetFilters">
+                    Reset filters
+                </MudButton>
+            </MudStack>
+
+            <MudSlider @bind-Value="_minRating"
+                       Min="0"
+                       Max="10"
+                       Step="0.5"
+                       Color="Color.Primary"
+                       Immediate="true">
+                <LabelTemplate>
+                    Minimum Rating: @_minRating
+                </LabelTemplate>
+            </MudSlider>
+
+            <MudNumericField T="int?"
+                             @bind-Value="_releaseYear"
+                             Label="Release year"
+                             Placeholder="e.g. 2005"
+                             Min="1900"
+                             Max="2100"
+                             Clearable="true" />
+        </MudStack>
+    </MudPaper>
+
+    <!-- Results -->
+    @if (_isLoading)
     {
-        <p>No results.</p>
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Primary" />
+    }
+    else if (!string.IsNullOrWhiteSpace(_errorMessage))
+    {
+        <MudAlert Severity="Severity.Error">
+            @_errorMessage
+        </MudAlert>
+    }
+    else if (_hasSearched && _movies.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">
+            No results.
+        </MudAlert>
     }
     else if (_movies.Count > 0)
     {
-        <MudTable Items="_movies" Hover="true" Bordered="true" Striped="true">
+        <MudTable Items="FilteredMovies"
+                  Hover="true"
+                  Bordered="true"
+                  Striped="true">
             <HeaderContent>
                 <MudTh>
                     <MudTableSortLabel T="MovieSummary"
@@ -58,11 +116,13 @@ else if (_movies.Count > 0)
                 <MudTd DataLabel="Release Date">@context.ReleaseDate</MudTd>
                 <MudTd DataLabel="Rating">@context.Rating</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudButton Variant="Variant.Text" Href="@($"/movies/{context.Id}")">
-                        View Detail
+                    <MudButton Variant="Variant.Text"
+                               OnClick="@(() => Navigation.NavigateTo($"/movies/{context.Id}"))">
+                        View Details
                     </MudButton>
                 </MudTd>
             </RowTemplate>
         </MudTable>
     }
-}
+
+</MudContainer>
