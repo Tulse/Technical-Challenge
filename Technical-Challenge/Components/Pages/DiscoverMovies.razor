@@ -1,0 +1,62 @@
+﻿@page "/movies/discover"
+@using Technical_Challenge.Models
+@using Technical_Challenge.Services
+@inject IMoviesApiClient MoviesApi
+
+<h3>Top-Rated Movies (Virtualized)</h3>
+
+@if (_isLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error">@_errorMessage</MudAlert>
+}
+else if (_movies?.Count > 0)
+{
+    <div class="virtualize-container">
+        <Virtualize Items="_movies" Context="movie">
+            <div class="movie-card">
+                <MudPaper Elevation="2" Class="pa-2 mx-2 my-2">
+                    <MudCard Style="width: 200px;">
+                        <MudCardMedia Image="@movie.PosterUrl" Alt="@movie.Title" Height="280" />
+                        <MudCardContent Class="p-2">
+                            <MudText Typo="Typo.h6">@movie.Title</MudText>
+                            <MudText Typo="Typo.subtitle2">@movie.ReleaseDate</MudText>
+                            <MudText Typo="Typo.body2">@((movie.Overview?.Length > 140) ? $"{movie.Overview[..140]}…" : movie.Overview)</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Rating: @movie.Rating</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudPaper>
+            </div>
+        </Virtualize>
+    </div>
+}
+else
+{
+    <p>No movies to display.</p>
+}
+
+@code {
+    private List<Models.MovieDetail> _movies = new();
+    private bool _isLoading;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+        try
+        {
+            _movies = await MoviesApi.DiscoverMoviesAsync();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to load movies: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

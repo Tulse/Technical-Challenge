@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.Components;
     using Services;
 
-    public partial class MovieDetail(IMoviesApiClient moviesApi) : ComponentBase
+    public partial class MovieDetails(IMoviesApiClient moviesApi) : ComponentBase
     {
         [Parameter] public int MovieId { get; set; }
 

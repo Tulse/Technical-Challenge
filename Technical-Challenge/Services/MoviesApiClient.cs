@@ -50,5 +50,18 @@
             return response
                 ?? throw new InvalidOperationException("API returned no data.");
         }
+
+        public async Task<List<MovieDetail>> DiscoverMoviesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var http = httpClientFactory.CreateClient("MoviesApi");
+
+            var response = await http.GetFromJsonAsync<List<MovieDetail>>(
+                $"movies/virtualize",
+                cancellationToken
+            );
+
+            return response ?? throw new InvalidOperationException("API returned no data.");
+        }
     }
 }
