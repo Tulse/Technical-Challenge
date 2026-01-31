@@ -1,7 +1,149 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mx-0">
 
-<h1>Hello, world!</h1>
+    <MudText Typo="Typo.h5" GutterBottom="true">
+        Summary
+    </MudText>
 
-Welcome to your new app.
+    <MudStack Spacing="1" Class="mb-4">
+        <MudText Typo="Typo.body2">
+            This application is a <strong>Blazor Server</strong> web app backed by a <strong>.NET Web API</strong> that consumes the public <strong>TMDB (The Movie Database)</strong> API.
+        </MudText>
+    </MudStack>
+
+    <MudDivider Class="my-4" />
+
+    <MudText Typo="Typo.h5" GutterBottom="true">
+        User Guide
+    </MudText>
+
+    <MudStack Spacing="1" Class="mb-4">
+        <MudText Typo="Typo.subtitle1">Popular Movies</MudText>
+        <MudText Typo="Typo.body2">
+            Browse a list of currently popular movies. Select any movie to view detailed
+            information such as rating, release date, and overview.
+        </MudText>
+
+        <MudText Typo="Typo.subtitle1">Search Movies</MudText>
+        <MudText Typo="Typo.body2">
+            Search for movies by title and refine results using client-side filters:
+            minimum rating and release year.
+            Filters can be reset at any time without re-running the search.
+        </MudText>
+
+        <MudText Typo="Typo.subtitle1">Discover Movies</MudText>
+        <MudText Typo="Typo.body2">
+            Explore top-rated movies using a virtualized list optimised for large datasets.
+            Click any movie card to view its details.
+        </MudText>
+    </MudStack>
+
+    <MudDivider Class="my-4" />
+
+    <MudStack Spacing="1" Class="mb-4">
+        <MudText Typo="Typo.h5" GutterBottom="true">
+            Credits
+        </MudText>
+
+        <MudText Typo="Typo.body2">
+            Created and submitted by Chris Bayliss (as part of a technical challenge for The Airedale Group).
+        </MudText>
+        <MudText Typo="Typo.body2">
+            This product uses the TMDB API but is not endorsed or certified by TMDB.
+        </MudText>
+    </MudStack>
+
+    <MudDivider Class="my-4" />
+
+    <MudStack Spacing="1" Class="mb-4">
+        <MudText Typo="Typo.h5" GutterBottom="true">
+            Technical Requirements and Features
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            <strong>Core Requirements</strong>
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            1. Data Fetching & Display
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Consumes the TMDB API utilising multiple endpoints
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Displays data in structured list and table formats
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Displays loading spinner while page loading
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            2. User Interaction
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Implements a search page with two different filter controls
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Allows users to view detailed information linked from summary data (master-detail)
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            3. Error Handling
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Displays user-friendly error messages
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Handles empty or no-results scenarios gracefully
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            4. Security
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • The required API key is stored via User Secrets.
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            5. Blazor Implementation
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Use of proper component architecture
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Use of dependency injection using primary constructors
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Use of data binding for interactive elements
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            6. Development Principles
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Interfaces are used appropriately, e.g. dependency injection and promotion of loose coupling
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Results pattern used to handle success and failure utilises inheritence
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            Bonus Features
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Virtualisation: Used to handle a larger data set (Discover Movies)
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Sorting: MudBlazor tables allows individual column sorting, and two other filters controls are implemented (Search Movies)
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Styling: MudBlazor components + small custom CSS additions are used to style the application
+        </MudText>
+        <MudText Typo="Typo.body2">
+            • Unit Tests: A demo unit test project has been included to cover some common API test scenarios. 
+            These also utilise the Results error handling implemented in the API.
+        </MudText>
+    </MudStack>
+
+</MudContainer>
