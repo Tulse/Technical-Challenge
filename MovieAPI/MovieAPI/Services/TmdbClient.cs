@@ -4,7 +4,6 @@
     using MovieAPI.Services.TmdbDtos;
     using System.Net;
     using System.Net.Http;
-    using System.Net.Http.Headers;
     using System.Net.Http.Json;
 
     public sealed class TmdbClient(HttpClient http) : ITmdbClient

@@ -1,7 +1,5 @@
 ﻿namespace MovieAPI.Controllers
 {
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.HttpResults;
     using Microsoft.AspNetCore.Mvc;
     using MovieAPI.Models;
     using MovieAPI.Results;
